@@ -1,6 +1,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
+import pymysql
 
-class Ui_MainWindow(object):
+connection = pymysql.connect(host='localhost',
+                user='root',
+                port = 3306,
+                db='pythondb_connect',
+                autocommit = True,
+                )
+
+cursor = connection.cursor()
+
+class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1088, 792)
@@ -104,17 +115,50 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Welcome to Management System"))
         self.menuMain.setTitle(_translate("MainWindow", "Main"))
         self.actionLogin.setText(_translate("MainWindow", "Login"))
-        self.actionRegsiter.setText(_translate("MainWindow", "Regsiter"))
+        self.actionRegsiter.setText(_translate("MainWindow", "Home"))
 
-        self.pushButton.clicked.connect(self.register)
-        self.pushButton_3.clicked.connect(self.checkRegistration)
+        self.pushButton.clicked.connect(self.registerScreen)
+        self.pushButton_3.clicked.connect(self.registration)
 
-    def register(self):
+        self.actionRegsiter.triggered.connect(self.homeScreen)
+
+    def homeScreen(self):
+        self.frame.hide()
+
+    def checkEmailId(self, emailId):
+        print("Checking EmaildId")
+        query = "SELECT * FROM employees"
+        cursor.execute(query)
+
+        for data in cursor:
+            if emailId in data:
+                # print("User Already Exist")
+                raise ValueError("User Already Exist")
+
+    def registerScreen(self):
         self.frame.show()
         self.frame_2.hide()
 
-    def checkRegistration(self):
-        self.frame_2.show()
+    def registration(self):
+
+        username = self.lineEdit.text()
+        email = self.lineEdit_2.text()
+        password = self.lineEdit_3.text()
+        company = self.lineEdit_4.text()
+
+        # print("Details", username, email, password, company)
+        try:
+            self.checkEmailId(email)
+            query = "INSERT INTO employees VALUES (%s,%s,%s,%s)"
+            cursor.execute(query, (username, email, password, company))
+            print("Data Inserted Successfully...")
+            self.frame_2.show()
+        except ValueError as err:
+            # print(err)
+            self.emailValidationPopUp()
+
+    def emailValidationPopUp(self):
+        QMessageBox.about(self,"Error","User Already Exist")
 
 if __name__ == "__main__":
     import sys
