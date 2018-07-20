@@ -1,6 +1,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
+import pymysql
 
-class Ui_MainWindow(object):
+connection = pymysql.connect(host='localhost',
+                user='root',
+                port = 3306,
+                db='testengine',
+                autocommit = True,
+                )
+
+cursor = connection.cursor()
+
+class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1087, 778)
@@ -366,7 +377,7 @@ class Ui_MainWindow(object):
         self.radioButton_4.setText(_translate("MainWindow", "option_1"))
         self.pushButton_2.setText(_translate("MainWindow", "Next Question"))
         self.label_6.setText(_translate("MainWindow", "Final Score"))
-        self.label_7.setText(_translate("MainWindow", "Teacher Login"))
+        self.label_7.setText(_translate("MainWindow", "Login"))
         self.label_8.setText(_translate("MainWindow", "User Name"))
         self.label_9.setText(_translate("MainWindow", "User Password"))
         self.pushButton_3.setText(_translate("MainWindow", "Login"))
@@ -415,6 +426,79 @@ class Ui_MainWindow(object):
         self.actionTeacher.setText(_translate("MainWindow", "Teacher"))
         self.actionStudent.setText(_translate("MainWindow", "Student"))
         self.actionRegister_2.setText(_translate("MainWindow", "Register"))
+
+        self.pushButton_8.clicked.connect(self.loginUser)
+        self.pushButton_3.clicked.connect(self.login)
+
+        self.pushButton_9.clicked.connect(self.registerUser)
+        self.pushButton_10.clicked.connect(self.registration)
+
+        self.actionHome.triggered.connect(self.showHome)
+
+    def showHome(self):
+        self.frame_8.hide()
+
+    def loginUser(self):
+        self.frame_4.hide()
+        self.frame_3.show()
+        self.user = self.comboBox_3.currentText()
+        self.loginTable = ""
+        # print(user)
+        if self.user == "Teacher":
+            self.label_7.setText("Login As Teacher")
+            self.loginTable = "teachers"
+        elif self.user == "Student":
+            self.label_7.setText("Login As Student")
+            self.loginTable = "students"
+
+
+    def login(self):
+        self.loginId = self.lineEdit_2.text()
+        self.loginPassword = self.lineEdit_3.text()
+
+        if self.loginTable == "teachers":
+            query = "SELECT * FROM teachers WHERE teacherEmail = %s AND teacherPassword = %s"
+            cursor.execute(query, (self.loginId, self.loginPassword))
+            self.loginTeacher()
+        elif self.loginTable == "students":
+            query = "SELECT * FROM students WHERE studentEmail = %s AND studentPassword = %s"
+            cursor.execute(query, (self.loginId, self.loginPassword))
+            self.loginStudent()
+
+    def loginTeacher(self):
+        self.frame_5.hide()
+        self.frame_4.show()
+
+    def loginStudent(self):
+        pass
+
+
+    def registerUser(self):
+        self.frame_8.show()
+        self.user = self.comboBox_4.currentText()
+        self.registerTable = ""
+        # print(user)
+        if self.user == "Teacher":
+            self.label_24.setText("Register As Teacher")
+            self.registerTable = "teachers"
+        elif self.user == "Student":
+            self.label_24.setText("Register As Student")
+            self.registerTable = "students"
+
+    def registration(self):
+        self.userid = self.lineEdit_11.text()
+        self.username = self.lineEdit_12.text()
+        self.useremail = self.lineEdit_13.text()
+        self.userpassword = self.lineEdit_14.text()
+
+        query = "INSERT INTO "+ self.registerTable +" VALUES (%s, %s, %s, %s)"
+        print(query)
+        cursor.execute(query, (self.userid,
+                               self.username,
+                               self.useremail,
+                               self.userpassword))
+        print("Data Inserted Successfully")
+        QMessageBox.about(self, "Success", "Registered Successfully")
 
 
 if __name__ == "__main__":
