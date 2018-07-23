@@ -12,6 +12,8 @@ connection = pymysql.connect(host='localhost',
 cursor = connection.cursor()
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
+    count = 1
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1087, 778)
@@ -230,6 +232,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.frame_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
+
+        self.imageLabel = QtWidgets.QLabel(self.frame_7)
+        self.image = QtGui.QPixmap('test_bg.jpg')
+        self.imageLabel.setGeometry(QtCore.QRect(0, 0, 1087, 778))
+        self.imageLabel.setPixmap(self.image)
+        self.imageLabel.setObjectName("image")
+
         self.comboBox_3 = QtWidgets.QComboBox(self.frame_7)
         self.comboBox_3.setGeometry(QtCore.QRect(370, 120, 341, 61))
         self.comboBox_3.setStyleSheet("font: 18pt \"MS Shell Dlg 2\";")
@@ -433,6 +442,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_9.clicked.connect(self.registerUser)
         self.pushButton_10.clicked.connect(self.registration)
 
+        self.pushButton_5.clicked.connect(self.showCreateTest)
+        self.pushButton_6.clicked.connect(self.createTest)
+
+        self.pushButton.clicked.connect(self.startTest)
+        self.pushButton_2.clicked.connect(self.nextQuestion)
+
         self.actionHome.triggered.connect(self.showHome)
 
     def showHome(self):
@@ -450,7 +465,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         elif self.user == "Student":
             self.label_7.setText("Login As Student")
             self.loginTable = "students"
-
 
     def login(self):
         self.loginId = self.lineEdit_2.text()
@@ -470,8 +484,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.frame_4.show()
 
     def loginStudent(self):
-        pass
-
+        self.frame.hide()
 
     def registerUser(self):
         self.frame_8.show()
@@ -500,6 +513,60 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("Data Inserted Successfully")
         QMessageBox.about(self, "Success", "Registered Successfully")
 
+    def showCreateTest(self):
+        self.frame_5.show()
+        self.frame_6.hide()
+
+    def createTest(self):
+        subject = self.comboBox_2.currentText()
+        question = self.lineEdit_4.text()
+        option_1 = self.lineEdit_5.text()
+        option_2 = self.lineEdit_6.text()
+        option_3 = self.lineEdit_7.text()
+        option_4 = self.lineEdit_8.text()
+        answer = self.lineEdit_9.text()
+        print(subject, question)
+        query = "INSERT INTO questions VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+        cursor.execute(query, (subject, question, option_1, option_2,
+                               option_3, option_4, answer))
+        print("Query Executed...")
+        btn_1 = QtWidgets.QMessageBox.question(self,'Question Inserted', "Do you want to add another question",
+                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if btn_1 == QMessageBox.Yes:
+            self.lineEdit_4.setText("")
+            self.lineEdit_5.setText("")
+            self.lineEdit_6.setText("")
+            self.lineEdit_7.setText("")
+            self.lineEdit_8.setText("")
+            self.lineEdit_9.setText("")
+            self.showCreateTest()
+        else:
+            self.loginTeacher()
+
+    def startTest(self):
+        self.frame.show()
+        self.frame_2.hide()
+        subject = self.comboBox.currentText()
+        query = "SELECT * from questions WHERE subject = %s"
+        cursor.execute(query, subject)
+        # print(cursor.rowcount)
+        self.data = cursor.fetchall()
+        # print(data)
+        self.showTestData()
+
+    def showTestData(self):
+        for i in range(self.count):
+            self.label_5.setText(self.data[i][1])
+            self.radioButton.setText(self.data[i][2])
+            self.radioButton_2.setText(self.data[i][3])
+            self.radioButton_3.setText(self.data[i][4])
+            self.radioButton_4.setText(self.data[i][5])
+
+    def nextQuestion(self):
+        self.count += 1
+        self.showTestData()
 
 if __name__ == "__main__":
     import sys
