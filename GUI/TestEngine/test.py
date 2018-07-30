@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-import pymysql
+import pymysql, time, threading
 
 connection = pymysql.connect(host='localhost',
                 user='root',
@@ -54,6 +54,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
+
+        self.timeLabel = QtWidgets.QLabel(self.frame)
+        self.timeLabel.setGeometry(QtCore.QRect(400, 10, 300, 91))
+        self.timeLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
+        self.timeLabel.setObjectName("timeLabel")
+
         self.label_5 = QtWidgets.QLabel(self.frame)
         self.label_5.setGeometry(QtCore.QRect(70, 80, 901, 91))
         self.label_5.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
@@ -380,6 +386,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_3.setText(_translate("MainWindow", "1. Test will be of 30 minutes"))
         self.label_4.setText(_translate("MainWindow", "1. Test will be of 30 minutes"))
         self.label_5.setText(_translate("MainWindow", "Question : Who is the prime minister of India ?"))
+        self.timeLabel.setText(_translate("MainWindow", "Time Left :"))
         self.radioButton.setText(_translate("MainWindow", "option_1"))
         self.radioButton_2.setText(_translate("MainWindow", "option_1"))
         self.radioButton_3.setText(_translate("MainWindow", "option_1"))
@@ -555,6 +562,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.data = cursor.fetchall()
         # print(data)
         self.showTestData()
+        # self.startTime()
+        t_1 = threading.Thread(target=self.startTime)
+        t_1.start()
 
     def showTestData(self):
         for i in range(self.count):
@@ -567,6 +577,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def nextQuestion(self):
         self.count += 1
         self.showTestData()
+
+    def startTime(self):
+        timeLeft = 30
+        while timeLeft > 0:
+            time.sleep(1)
+            timeLeft -= 1
+            self.timeLabel.setText("Time Left : "+str(timeLeft))
 
 if __name__ == "__main__":
     import sys
