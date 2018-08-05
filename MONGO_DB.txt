@@ -1,0 +1,23 @@
+MongoDB
+1. Open CMD inside bin
+2. type mongod.exe and hit enter
+3. Build a folder inside your system at any location
+4. Copy path of that folder
+5. In cmd type mongod.exe --dbpath "path-to-that-folder" and hit enter
+6. Open another cmd at same location(inside bin)
+7. type mongo.exe and hit enter in new cmd
+
+
+Documentation
+1. show dbs - database show
+2. use databaseName
+3. show collections
+
+Select Command
+4. db.collectionName.find().pretty()
+
+Insert Command
+5. db.users.insert({"key":"value"})
+
+Create Collection
+6. db.createCollection("students")

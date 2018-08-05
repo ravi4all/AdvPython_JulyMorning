@@ -1,0 +1,36 @@
+Introduction
+Career Objective
+Education
+
+Skills
+Core Languages - C/C++/C#/Java/Python
+Client Side - HTML/CSS/JS/AJAX
+Server Side - Python/JSP
+Databases - SQL(MySQL)/NOSQL(Mongo DB)
+OS 	- Mac/Linux/Windows
+Game Development - Pygame
+Desktop App Development - PyQT/Tkinter
+Tools and Editors - Pycharm/Eclipse, XAMPP, WAMP
+
+Mini Projects
+1. Break The Bricks
+2. Zombie Shooter
+3. Resume Finder
+
+Major Projects
+1. Test Engine
+   Description - Test engine where teacher can create test    and students can give test
+   Tools and Languages - Python, PyQT, QTDesigner, SQL,    XAMPP
+   Roles and Responsibility - 
+2. Product Comparison
+3. E-Commerce
+4. Street Fighter Game
+5. Game
+
+Contributions
+Github
+Hackerrank
+
+
+
+
